@@ -11,18 +11,23 @@ import com.example.shoppinglist.data.db.entities.ShoppingItem
 import com.example.shoppinglist.data.repositories.ShoppingRepository
 import com.example.shoppinglist.other.ShoppingItemAdapter
 import kotlinx.android.synthetic.main.activity_shopping.*
+import org.kodein.di.Kodein
+import org.kodein.di.android.kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.generic.instance
 
-class ShoppingActivity : AppCompatActivity() {
+
+class ShoppingActivity : AppCompatActivity(), KodeinAware {
+
+    override val kodein: Kodein by kodein()
+    private val factory : ShoppingViewModelFactory by instance()
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shopping)
 
-        val dataBase = ShoppingDataBase(this)
-        val repository = ShoppingRepository(dataBase)
-        val factory = ShoppingViewModelFactory(repository)
         val viewModel = ViewModelProvider(this, factory)[ShoppingViewModel::class.java]
-
         val adapter = ShoppingItemAdapter(listOf(), viewModel)
         recycler_view.adapter = adapter
 
